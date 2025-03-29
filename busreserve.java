@@ -7,6 +7,12 @@ class invalidinputcode extends Exception{
     }
 }
 
+class invalidinputseats extends Exception{
+    public invalidinputseats(String message){
+        super(message);
+    }
+}
+
 class Buses{
     String routecode;
     String busnumber;
@@ -31,7 +37,55 @@ class Buses{
     }
 }
 
+class reserve{
+    
+    int inputseats;
+    Buses valid_bus_code_selected;
 
+    reserve(int inputseats,Buses valid_bus_code_selected){
+        this.inputseats = inputseats;
+        this.valid_bus_code_selected = valid_bus_code_selected;
+    }
+
+    public void update_the_seats(){
+        String filename = "busdetails.csv";
+        List<String> lines = new ArrayList<>();
+
+        try(BufferedReader br = new BufferedReader(new FileReader(filename))){
+            br.readLine();
+            String line;
+            while((line=br.readLine())!=null){
+                String[] details = line.split(",");
+                if(details[0].equalsIgnoreCase(valid_bus_code_selected.routecode && details[1].equalsIgnoreCase(valid_bus_code_selected.busnumber))){
+                    details[4] = valid_bus_code_selected.availableseats - this.inputseats;
+                }
+                else{
+                    continue;
+                }
+                line = String.join(",",details);
+                lines.add(line);
+            }
+
+        }
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(filename))){
+            bw.write("routecode,Bus Number,Cost Per Seat,Total Seats,Available Seats,Driver,AC/Non AC,Phone Number,Bus Route");
+            bw.newLine();
+            for(String line_by_line: lines){
+                bw.write(line_by_line);
+                bw.newLine();
+            }
+        }
+        catch(IOException e){
+            System.out.prinltn(e.getMessage());
+        }
+
+    }
+
+}
 
 public class busreserve{
     private static final String filename = "busdetails.csv";
@@ -91,19 +145,23 @@ public class busreserve{
             
             if(!selectedacornot_found){
                 System.out.println("There is no available bus that you want.");
-                System.out.print("Do you want to try other type (AC / NON_AC) yes or no :");
-                String prefer = scan.nextLine();
-                if(prefer.equalsIgnoreCase("yes")){
-                   continue;
-                }
-                else if(prefer.equalsIgnoreCase("no")){
-                    System.out.println("THANK YOU!!");
-                    return;
-                    
-                }
-                else{
-                    System.out.println("Enter correct input:");
-                    continue;
+                
+                
+                while(true){
+                    System.out.print("Do you want to try other type (AC / NON_AC) yes or no :");
+                    String prefer = scan.nextLine();
+                    if(prefer.equalsIgnoreCase("yes")){
+                        break;
+                    }
+                    else if(prefer.equalsIgnoreCase("no")){
+                        System.out.println("THANK YOU!!");
+                        return;
+                        
+                    }
+                    else{
+                        System.out.println("Enter correct input:");
+                        continue;
+                    }
                 }
             }
             else{
@@ -118,7 +176,65 @@ public class busreserve{
             System.out.println("Bus number: "+selectedacornot.get(j).busnumber+ " ,cost_per_seat: "+selectedacornot.get(j).cost_per_seat+" ,totalseats: "+selectedacornot.get(j).totalseats+" ,available seats: "+selectedacornot.get(j).availableseats+ " ,phone number: "+selectedacornot.get(j).phonenumber+" ,driver name: "+selectedacornot.get(j).driver);
         }
         
+        Buses valid_bus_code_selected = null;
+        boolean validbuscode = false;
+        while(true){
+            System.out.print("Enter the bus code you want: ");
+            String preferbuscode = scan.nextLine();
+            for(int k=0; k<selectedacornot.size(); k++){
+                if(selectedacornot.get(k).busnumber.equalsIgnoreCase(preferbuscode)){
+                    validbuscode = true;
+                    valid_bus_code_selected = selectedacornot.get(k);
+                    break;
+                }
+                else{
+                    continue;
+                }
+            }
+
+            if(!validbuscode){
+                System.out.println("Your bus code is incorrect!!");
+            }
+            else{
+                break;
+            }
+
+        }
+
+        System.out.println("Here is your bus details: ");
+        System.out.println("Bus number: "+valid_bus_code_selected.busnumber+ " ,cost_per_seat: "+valid_bus_code_selected.cost_per_seat+" ,totalseats: "+valid_bus_code_selected.totalseats+" ,available seats: "+valid_bus_code_selected.availableseats+ " ,phone number: "+valid_bus_code_selected.phonenumber+" ,driver name: "+valid_bus_code_selected.driver);
+        System.out.println();
+
+        boolean seatsavailable = false;
+        int inputseats;
+        while(true){
+            System.out.print("How many seats you want? ");
+            inputseats = scan.nextInt();
+            scan.nextLine();
+            try{
+                if(inputseats<valid_bus_code_selected.availableseats){
+                    System.out.print("Are you confirm your reservation? yes/no: ");
+                    String confirmbooking = scan.nextLine();
+                    if(confirmbooking.equalsIgnoreCase("yes")){
+                        break;
+                    }
+                    else{
+                        System.out.println("Thankyou so much. ");
+                        return;
+                    }
+                }
+                else{
+                    throw new invalidinputseats("There is no available seats. You can try less than this numbe rof seats.");
+                }
+            }
+            catch(invalidinputseats e){
+                System.out.println(e.getMessage());
+            }
+        }
         
+        //System.out.println(inputseats);
+        reserve reserveseats = new reserve(inputseats,valid_bus_code_selected);
+        reserveseats.update_the_seats();
         
         
     }
