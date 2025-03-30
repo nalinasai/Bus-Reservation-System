@@ -1,15 +1,15 @@
 routecode,Bus Number,Cost Per Seat,Total Seats,Available Seats,Driver,AC/Non AC,Phone Number,Bus Route
-1,101,1500,50,25,John Doe,1,0762342342,Jaffna to Colombo
-2,102,1200,40,25,mary Jane,0,0771235678,Colombo to Galle
+1,101,1500,50,20,John Doe,1,0762342342,Jaffna to Colombo
+2,102,1200,40,24,mary Jane,0,0771235678,Colombo to Galle
 3,103,1800,60,10,Peter Smith,1,0756789012,Kandy to Nuwara Eliya
-4,104,1700,55,30,Alice King,1,0763456789,Batticaloa to Trincomalee
+4,104,1700,55,26,Alice King,1,0763456789,Batticaloa to Trincomalee
 5,105,1300,45,12,Thomas Brown,0,0772341234,Matara to Hambantota
-1,106,1400,50,15,Michael Fisher,1,0764567890,Jaffna to Colombo
+1,106,1400,50,11,Michael Fisher,1,0764567890,Jaffna to Colombo
 2,107,1100,35,7,Sarah Collins,0,0773456789,Colombo to Galle
 3,108,1750,60,20,Daniel Evans,1,0755671234,Kandy to Nuwara Eliya
 4,109,1250,50,35,Emma Watson,0,0766781234,Batticaloa to Trincomalee
 5,110,1450,55,28,Oliver Brown,1,0779871234,Matara to Hambantota
-1,111,1550,50,5,Abigail Johnson,1,0767891234,Jaffna to Colombo
+1,111,1550,50,4,Abigail Johnson,1,0767891234,Jaffna to Colombo
 2,112,1180,40,10,Paul White,0,0776543210,Colombo to Galle
 3,113,1650,65,18,Kevin Scott,1,0756547890,Kandy to Nuwara Eliya
 4,114,1705,55,25,Natalie Green,0,0761234567,Batticaloa to Trincomalee

@@ -1,0 +1,13 @@
+Welcome to the GN bus Reservation.
+
+===========================================
+Customer Name: nalina
+Bus number: 104
+Route of the bus: Batticaloa to Trincomalee
+driver name and phonenumber: Alice King 0763456789
+
+Reserved seats: 2
+Total price: 3400.0
+
+===========================================
+THANK YOU!!

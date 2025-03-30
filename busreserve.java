@@ -1,5 +1,7 @@
 import java.io.*;
 import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 class invalidinputcode extends Exception{
     public invalidinputcode(String message){
@@ -37,6 +39,71 @@ class Buses{
     }
 }
 
+class save_details_customer{
+    String customer_name;
+    Buses valid_bus_code_selected;
+    int inputseats;
+
+    save_details_customer(String customer_name, Buses valid_bus_code_selected,int inputseats){
+        this.customer_name = customer_name;
+        this.valid_bus_code_selected = valid_bus_code_selected;
+        this.inputseats = inputseats;
+    }
+
+    public void customercsv(){
+        String customer_file = "customer.csv";
+        double totalprice = this.inputseats * this.valid_bus_code_selected.cost_per_seat;
+        boolean fileexist = new File(customer_file).exists();
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(customer_file,true))){
+            if(!fileexist){
+                bw.write("Customername,Bus number,reserved seats,total price,driver,timestamp\n");
+            }
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            bw.write(this.customer_name+","+this.valid_bus_code_selected.busnumber+","+this.inputseats+","+totalprice+","+this.valid_bus_code_selected.driver+","+timestamp+"\n");
+        }
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+    }       
+}
+
+class bills{
+    Buses valid_bus_code_selected;
+    int inputseats;
+    String customer_name;
+
+    bills(Buses valid_bus_code_selected, int inputseats, String customer_name){
+        this.valid_bus_code_selected = valid_bus_code_selected;
+        this.inputseats = inputseats;
+        this.customer_name = customer_name;
+    }
+
+    
+
+    public void generate_the_bill(){
+        double totalprice = this.inputseats * this.valid_bus_code_selected.cost_per_seat;
+        String billprint = "bill.txt";
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(billprint))){
+            bw.write("Welcome to the GN bus Reservation.\n\n");
+            bw.write("===========================================\n");
+            bw.write("Customer Name: "+this.customer_name+"\n");
+            bw.write("Bus number: "+this.valid_bus_code_selected.busnumber+"\n");
+            bw.write("Route of the bus: "+this.valid_bus_code_selected.busroute+"\n");
+            bw.write("driver name and phonenumber: "+this.valid_bus_code_selected.driver+" "+this.valid_bus_code_selected.phonenumber+"\n\n");
+            bw.write("Reserved seats: "+this.inputseats+"\n");
+            bw.write("Total price: "+totalprice+"\n\n");
+            bw.write("===========================================\n");
+            bw.write("THANK YOU!!");
+        }
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+        System.out.println("Your bill saved as "+billprint);
+        
+    }
+}
+
+
 class reserve{
     
     int inputseats;
@@ -56,11 +123,8 @@ class reserve{
             String line;
             while((line=br.readLine())!=null){
                 String[] details = line.split(",");
-                if(details[0].equalsIgnoreCase(valid_bus_code_selected.routecode && details[1].equalsIgnoreCase(valid_bus_code_selected.busnumber))){
-                    details[4] = valid_bus_code_selected.availableseats - this.inputseats;
-                }
-                else{
-                    continue;
+                if((details[0].equalsIgnoreCase(valid_bus_code_selected.routecode)) && (details[1].equalsIgnoreCase(valid_bus_code_selected.busnumber))){
+                    details[4] = String.valueOf(valid_bus_code_selected.availableseats - this.inputseats);
                 }
                 line = String.join(",",details);
                 lines.add(line);
@@ -80,7 +144,7 @@ class reserve{
             }
         }
         catch(IOException e){
-            System.out.prinltn(e.getMessage());
+            System.out.println(e.getMessage());
         }
 
     }
@@ -212,14 +276,14 @@ public class busreserve{
             inputseats = scan.nextInt();
             scan.nextLine();
             try{
-                if(inputseats<valid_bus_code_selected.availableseats){
+                if(inputseats<=valid_bus_code_selected.availableseats){
                     System.out.print("Are you confirm your reservation? yes/no: ");
                     String confirmbooking = scan.nextLine();
                     if(confirmbooking.equalsIgnoreCase("yes")){
                         break;
                     }
                     else{
-                        System.out.println("Thankyou so much. ");
+                        System.out.println("Reservation cancellled. Thankyou so much. ");
                         return;
                     }
                 }
@@ -232,11 +296,19 @@ public class busreserve{
             }
         }
         
-        //System.out.println(inputseats);
+        
         reserve reserveseats = new reserve(inputseats,valid_bus_code_selected);
         reserveseats.update_the_seats();
         
+        System.out.print("Enter the custoomer name: ");
+        String customer_name = scan.nextLine();
+
+        bills bill = new bills(valid_bus_code_selected,inputseats,customer_name);
+        bill.generate_the_bill();
+
         
+        save_details_customer customer_detail = new save_details_customer(customer_name,valid_bus_code_selected,inputseats);
+        customer_detail.customercsv();
     }
 
 
